@@ -14,6 +14,7 @@ Personal portfolio site for Yadwinder Dhaliwal, Graphics & Real-Time Simulation 
 
 ```
 index.html          # the whole site: markup, styles and script
+Yadwinder_Dhaliwal_Resume.pdf  # one-page A4 résumé linked from the hero button
 media/
 ├── headshot.jpg    # 640×640 portrait
 ├── formula.mp4     # FormulaInfinite gameplay (1280 px, H.264, web-compressed)
@@ -54,7 +55,7 @@ ffmpeg -ss 5 -i media/name.mp4 -frames:v 1 -q:v 4 media/name.jpg
 
 ## To do
 
-- [ ] Add the résumé PDF link (hero button)
-- [ ] Fill in the JDC West IT Specialist description
+- [x] Add the résumé PDF link (hero button)
+- [x] Fill in the JDC West IT Specialist description
 - [ ] Add RaySense and Anti Smurf media once there is something to show
 - [ ] Swap the Selene video as new tiers are finished
