@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<title>Yadwinder Dhaliwal · Portfolio</title>
+<meta name="description" content="Yadwinder Dhaliwal — Graphics and Real-Time Simulation Engineer. C++20, PhysX 5, OpenGL, Vulkan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: quiet, precise, engineer's notebook — scannable in 10 seconds
+   IDEA: a graphics paper figure: one fitted curve, labelled, nothing extra
+   PICTURE: a B-spline fitted to a lunar crater cross-section (nod to Project Selene)
+   COLOUR and TYPE: pure black and white, colour only from playing video; IBM Plex Sans + Plex Mono for tags
+   LAYOUT: single 1040px column, sticky nav, cards in a 2-col grid that stacks on phones */
+:root{--bg:#ffffff;--bg2:#f4f4f4;--ink:#0a0a0a;--mute:#5e5e5e;--line:#e2e2e2;--acc:#0a0a0a;--acc-soft:#ececec;--ph:#5e5e5e;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0a0a0a;--bg2:#151515;--ink:#f2f2f2;--mute:#9c9c9c;--line:#272727;--acc:#ffffff;--acc-soft:#202020;--ph:#9c9c9c;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#0a0a0a;--bg2:#151515;--ink:#f2f2f2;--mute:#9c9c9c;--line:#272727;--acc:#ffffff;--acc-soft:#202020;--ph:#9c9c9c;color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:clamp(1040px,80vw,1800px);margin:0 auto;padding:0 max(5vw,18px)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+
+/* nav */
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:16px;height:60px}
+.brand{font-weight:600;text-decoration:none;margin-inline-end:auto;white-space:nowrap}
+.links{display:flex;gap:4px;overflow-x:auto}
+.links a{text-decoration:none;color:var(--mute);font-size:15px;padding:10px;border-radius:8px;white-space:nowrap}
+.links a:hover{color:var(--ink);background:var(--bg2)}
+.theme{flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.theme:hover{background:var(--bg2)}
+.theme svg{width:20px;height:20px}
+.theme .sun{display:none}
+:root[data-eff=dark] .theme .sun{display:block}:root[data-eff=dark] .theme .moon{display:none}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.menu{display:none}
+.sheet{display:none;border-top:1px solid var(--line);padding:8px max(5vw,18px) 14px}
+.sheet a{display:flex;align-items:center;min-height:48px;text-decoration:none;font-size:17px;font-weight:500;border-bottom:1px solid var(--line)}
+.sheet a:last-child{border-bottom:0}
+nav.open .sheet{display:block}
+.menu .x{display:none}nav.open .menu .x{display:block}nav.open .menu .bars{display:none}
+
+/* ambient glow: the playing video's colours bleed into its own card only */
+.card{position:relative;overflow:hidden;isolation:isolate;transition:border-color .6s}
+.card>*:not(.amb){position:relative;z-index:1}
+.amb{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;filter:blur(42px) saturate(1.5);opacity:0;transition:opacity .9s ease;transform:scale(1.08)}
+.card.lit .amb{opacity:.38}
+:root[data-eff=light] .amb{filter:blur(42px) saturate(2.2) brightness(1.7)}
+:root[data-eff=dark] .amb{filter:blur(42px) saturate(1.9) brightness(1.35)}
+:root[data-eff=dark] .card.lit .amb{opacity:.75}
+.card.lit{border-color:transparent}
+.card.lit .tags li{background:color-mix(in srgb,var(--bg) 70%,transparent)}
+
+/* hero */
+.hero{padding:clamp(48px,8vw,96px) 0 0}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,5vw,56px);align-items:center}
+.photo{width:clamp(160px,22vw,240px);height:auto;aspect-ratio:1;border-radius:20px;object-fit:cover;border:1px solid var(--line);display:block;filter:grayscale(1) contrast(1.05)}
+.media{position:relative;margin:2px 0 2px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000;aspect-ratio:16/9}
+.media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.media.tall{aspect-ratio:1750/1338}.media.tall video{object-fit:contain}
+.media figcaption{position:absolute;left:8px;top:8px;font-size:12px;color:#fff;background:rgba(0,0,0,.6);padding:2px 8px;border-radius:6px;pointer-events:none}
+.with{font-size:14px;color:var(--mute)}
+.hero h1{font-size:clamp(36px,6vw,52px);line-height:1.05;letter-spacing:-.02em;margin:0 0 10px;text-wrap:balance}
+.role{font-size:clamp(18px,2.4vw,22px);color:var(--acc);font-weight:500;margin:0 0 18px}
+.pitch{font-size:17px;max-width:62ch;margin:0 0 14px}
+.meta{color:var(--mute);font-size:15px;margin:0 0 26px}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border:1px solid var(--line);border-radius:10px;text-decoration:none;font-size:15px;font-weight:500;background:var(--bg)}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn svg{width:18px;height:18px;flex:none}
+.fig{position:relative;height:170px;margin:44px 0 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.cap{position:absolute;right:0;bottom:8px;font-size:12px;color:var(--mute);background:var(--bg);padding:0 0 0 8px}
+
+/* sections */
+section{padding:clamp(48px,7vw,80px) 0 0}
+h2{font-size:clamp(26px,3.4vw,32px);line-height:1.1;letter-spacing:-.01em;margin:0 0 6px}
+.sub{color:var(--mute);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.card:hover{border-color:color-mix(in srgb,var(--ink) 35%,var(--line))}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.card h3{margin:0;font-size:20px;line-height:1.25}
+.when{font-size:13px;color:var(--mute);white-space:nowrap}
+.badge{display:inline-block;font-size:12px;font-weight:500;padding:2px 8px;border-radius:99px;background:var(--acc-soft);color:var(--acc);margin-inline-start:8px;vertical-align:3px;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:6px;padding:0;margin:0;list-style:none}
+.tags li{font-size:12.5px;padding:3px 8px;border:1px solid var(--line);border-radius:6px;color:var(--mute);background:var(--bg2)}
+.card p{margin:0;font-size:15.5px}
+.card p b{font-weight:600}
+.impact{border-inline-start:2px solid var(--acc);padding-inline-start:12px;color:var(--ink)}
+.role-line{font-size:14px;color:var(--mute)}
+.actions{display:flex;gap:16px;margin-top:auto;padding-top:6px;flex-wrap:wrap;font-size:14.5px}
+.actions a{color:var(--acc);font-weight:500;text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
+.actions a:hover{text-decoration:underline}
+.ph{color:var(--ph);border:1px dashed currentColor;border-radius:4px;padding:0 4px;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.86em;white-space:normal}
+
+/* skills + experience */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:40px}
+.skills dl{margin:0;display:grid;gap:18px}
+.skills dt{font-weight:600;font-size:15px;margin-bottom:6px}
+.skills dd{margin:0}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:22px}
+.tl li{display:grid;grid-template-columns:8.5em minmax(0,1fr);gap:16px}
+.tl .d{font-size:13px;color:var(--mute);padding-top:3px}
+.tl h4{margin:0;font-size:16px}
+.tl .org{color:var(--mute);font-size:15px}
+.tl p{margin:4px 0 0;font-size:15px}
+h3.sm{font-size:15px;text-transform:none;color:var(--mute);font-weight:500;margin:0 0 14px}
+
+/* contact */
+.contact{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.mail{font-size:clamp(18px,3vw,24px);font-weight:600;text-decoration:none;overflow-wrap:anywhere}
+.mail:hover{color:var(--acc)}
+.copy{min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:500 14px "IBM Plex Sans",sans-serif;cursor:pointer}
+.copy:hover{border-color:var(--ink)}
+footer{margin-top:72px;border-top:1px solid var(--line);padding:24px 0 40px;color:var(--mute);font-size:14px}
+
+@media (max-width:760px){.grid,.two{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){
+  .links{display:none}
+  .menu{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);cursor:pointer}
+  .menu svg{width:20px;height:20px}
+  nav .wrap{gap:8px}
+}
+@media (max-width:600px){
+  .hero{padding-top:32px}
+  .hero-grid{grid-template-columns:minmax(0,1fr);gap:20px}
+  .photo{order:-1;width:112px;border-radius:16px}
+  .cta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .cta .btn{justify-content:center;padding:0 8px}
+  .cta .btn:last-child{grid-column:1/-1}
+  .fig{margin-top:32px}
+  section{padding-top:52px}
+  .sub{margin-bottom:20px}
+  .grid{gap:14px}
+  .card{padding:16px;border-radius:12px}
+  .media{margin-inline:-4px}
+  .card h3{font-size:19px}
+  .two{gap:52px}
+  footer{margin-top:52px}
+}
+@media (max-width:520px){.tl li{grid-template-columns:minmax(0,1fr);gap:2px}.fig{height:120px}.cap{display:none}}
+@media (hover:none){.card:hover{border-color:var(--line)}.btn:hover{border-color:var(--line)}.btn.primary:hover{border-color:var(--ink)}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}#curve{animation:none!important;stroke-dashoffset:0!important}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@media (min-width:1800px){body{font-size:17px}.pitch{font-size:18px;max-width:66ch}.card p{font-size:16.5px}.photo{width:280px}.hero h1{font-size:60px}.fig{height:200px}}
+@media (min-width:1700px){
+  .grid{grid-auto-flow:row dense;gap:22px}
+  .card:has(.media){grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:repeat(4,auto) 1fr;column-gap:40px;row-gap:14px;align-content:start;padding:28px}
+  .card:has(.media)>.media{grid-column:1;grid-row:1/6;align-self:start;margin:0}
+  .card:has(.media)>*:not(.media):not(.amb){grid-column:2;max-width:72ch}
+  .card:has(.media) .actions{align-self:end}
+  .card:has(.media) h3{font-size:24px}
+}
+</style>
+<script>
+/* apply saved theme before paint */
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}
+</script>
+</head>
+<body>
+
+<nav aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top">Yadwinder Dhaliwal</a>
+    <div class="links">
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="theme" id="theme" type="button" aria-label="Switch colour theme">
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+    <button class="menu" id="menu" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sheet">
+      <svg class="bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="sheet" id="sheet">
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<main class="wrap" id="top">
+
+  <header class="hero">
+   <div class="hero-grid">
+   <div>
+    <h1>Yadwinder Dhaliwal</h1>
+    <p class="role">Graphics &amp; Real-Time Simulation Engineer</p>
+    <p class="pitch">I write C++ that makes things move and render in real time: PhysX&nbsp;5 vehicle physics for a racing engine, B-spline terrain fitted to NASA lunar data in OpenGL, and a ray-traced LiDAR simulator in Vulkan.</p>
+    <p class="meta">B.Sc. Computer Science, University of Calgary (Apr 2027) · Calgary, AB · open to relocation · seeking 2027 new-grad roles</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/yadwinder-dhaliwal" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>GitHub</a>
+      <a class="btn" href="https://www.linkedin.com/in/yadwinder-dhaliwal" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.1c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V21h-4z"/></svg>LinkedIn</a>
+      <a class="btn" href="mailto:yadwinderdhaliwal250@gmail.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email</a>
+      <a class="btn" href="#">Résumé <span class="ph">[PLACEHOLDER: résumé PDF link]</span></a>
+    </div>
+   </div>
+    <img class="photo" src="media/headshot.jpg" width="640" height="640" alt="Portrait of Yadwinder Dhaliwal">
+   </div>
+
+    <div class="fig" aria-hidden="true">
+      <svg id="spline"></svg>
+      <span class="cap mono">cubic B-spline fit · crater cross-section</span>
+    </div>
+  </header>
+
+  <section id="projects">
+    <h2>Selected projects</h2>
+    <p class="sub">C++ simulation and graphics work, newest first. Two are in active development.</p>
+    <div class="grid">
+
+      <article class="card">
+        <div class="top"><h3>Project Selene <span class="badge">In progress</span></h3><span class="when mono">Oct 2026 – now · solo</span></div>
+        <figure class="media tall"><video src="media/selene.mp4" poster="media/selene.jpg" muted loop playsinline controls preload="none" aria-label="Project Selene current build"></video><figcaption>Current build · Tier 1</figcaption></figure>
+        <ul class="tags mono"><li>C++20</li><li>OpenGL</li><li>GLSL</li><li>Dear ImGui</li><li>Python/GDAL</li></ul>
+        <p><b>Lunar site modeler</b> for the south-pole terrain around Shackleton crater, built from NASA LOLA elevation data. I implemented B-spline curves and bicubic surfaces from scratch and fit them with a separable least-squares solver using a hand-written Cholesky decomposition, backed by unit tests against finite differences and exact bicubic reproduction.</p>
+        <p class="impact">On a 601×601 grid, RMS error drops from 159&nbsp;m to 7.7&nbsp;m (8×8 → 66×66 control points) with a 3.2&nbsp;ms fit; the 1.18M-triangle surface renders at 240&nbsp;FPS.</p>
+        <div class="actions"><a href="https://github.com/yadwinder-dhaliwal/Project-Selene-The-Lunar-Site-Modeler" target="_blank" rel="noopener">Repository →</a></div>
+      </article>
+
+      <article class="card">
+        <div class="top"><h3>RaySense <span class="badge">In progress</span></h3><span class="when mono">Oct 2026 – now · solo</span></div>
+        <ul class="tags mono"><li>C++20</li><li>Vulkan ray queries</li><li>OpenUSD</li><li>PhysX 5</li><li>ROS 2 Jazzy</li></ul>
+        <p><b>GPU LiDAR and camera sensor simulator</b> for robotics testing. It ray-traces sensor returns with Vulkan ray queries over OpenUSD scenes and publishes ROS&nbsp;2 PointCloud2 and Image messages, so robot software can consume simulated data as if it came from real hardware.</p>
+        <p class="impact">Target: a 64-beam LiDAR at 10&nbsp;Hz in real time on an RTX&nbsp;5070. Vulkan, CMake and Ubuntu toolchain are in place.</p>
+      </article>
+
+      <article class="card">
+        <div class="top"><h3>FormulaInfinite</h3><span class="when mono">Jan – Apr 2026 · team of 5</span></div>
+        <figure class="media"><video src="media/formula.mp4" poster="media/formula.jpg" muted loop playsinline controls preload="none" aria-label="FormulaInfinite gameplay"></video><figcaption>Gameplay</figcaption></figure>
+        <ul class="tags mono"><li>C++20</li><li>PhysX 5 Vehicle2</li><li>OpenGL/GLSL</li><li>CMake</li></ul>
+        <p><b>Real-time racing engine</b> with procedurally generated tracks. I owned vehicle physics: cooking road meshes into welded triangle-mesh colliders, velocity-squared downforce and drag every frame, and per-wheel tire friction behind a bounds-checked API after root-causing a bug where all four wheels shared one table. I also built the speed, RPM and gear telemetry HUD.</p>
+        <p class="impact">Delivered the first build where the car drove on a generated track; grip rises up to 4.2% at 1,470&nbsp;N downforce with a fixed 1.9&nbsp;:&nbsp;1.6 front-to-rear ratio.</p>
+        <div class="actions"><a href="https://github.com/NeptunesOrca/FormulaInfinite" target="_blank" rel="noopener">Repository →</a></div>
+      </article>
+
+      <article class="card">
+        <div class="top"><h3>Anti Smurf (FairQueue) <span class="badge">In progress</span></h3><span class="when mono">Oct 2026 – now · team of 2</span></div>
+        <p class="with">With Guntaas Uppal</p>
+        <ul class="tags mono"><li>Python</li><li>Simulation</li><li>Elo / TrueSkill</li><li>Anomaly detection</li><li>pytest</li></ul>
+        <p><b>Smurf detection for matchmaking.</b> Real match data almost never says who is a smurf, so detectors can't be checked. We simulate first: every player has a hidden true skill and a visible rating, smurfs are injected with known labels, and rating models and detectors are scored against that ground truth.</p>
+        <p class="impact">Done: Elo baseline and a labelled player simulator. Next: TrueSkill, skill-trajectory features, anomaly detection and a queue simulator that weighs wait time against match fairness.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="two">
+      <div class="skills">
+        <h2>Skills</h2>
+        <p class="sub">What I use day to day.</p>
+        <dl>
+          <div><dt>Languages</dt><dd><ul class="tags mono"><li>C++20</li><li>C</li><li>Python</li><li>GLSL</li><li>C#</li><li>Java</li><li>Bash</li><li>Assembly</li></ul></dd></div>
+          <div><dt>Graphics &amp; simulation</dt><dd><ul class="tags mono"><li>PhysX 5 (Vehicle2)</li><li>OpenGL 4.1</li><li>Vulkan</li><li>GLM</li><li>GLFW</li><li>Dear ImGui</li><li>B-splines</li><li>Least-squares fitting</li><li>Unity</li></ul></dd></div>
+          <div><dt>Tools &amp; infrastructure</dt><dd><ul class="tags mono"><li>Git/GitHub</li><li>CMake</li><li>vcpkg</li><li>Visual Studio/MSVC</li><li>GDB</li><li>RenderDoc</li><li>Linux (daily)</li><li>Python/GDAL</li></ul></dd></div>
+          <div><dt>Practices</dt><dd><ul class="tags mono"><li>Fixed-timestep simulation</li><li>Unit testing</li><li>Root-cause debugging</li><li>Runtime telemetry</li><li>Code review</li></ul></dd></div>
+        </dl>
+      </div>
+
+      <div id="experience">
+        <h2>Experience</h2>
+        <p class="sub">Work and education.</p>
+        <ul class="tl">
+          <li><span class="d mono">Sep 2023 – Apr 2027</span><div><h4>B.Sc. Computer Science <span class="org">· University of Calgary</span></h4><p>Expected April 2027. Coursework: Data Structures &amp; Algorithms, Computer Game Development, Computer Architecture &amp; Assembly, Distributed Systems &amp; Networks, Object-Oriented Software Development.</p></div></li>
+          <li><span class="d mono">Oct 2024 – now</span><div><h4>Package Handler <span class="org">· FedEx, Calgary</span></h4><p>Part-time alongside full-time study. Process 16,000–26,000 packages per 5-hour shift at near-100% scan accuracy against fixed dispatch deadlines.</p></div></li>
+          <li><span class="d mono">Jan 2025</span><div><h4>IT Specialist, volunteer <span class="org">· JDC West</span></h4><p><span class="ph">[PLACEHOLDER: what you set up or supported, and for how many people]</span></p></div></li>
+          <li><span class="d mono">Jan 2020 – Jul 2023</span><div><h4>Private Tutor &amp; ESL Teacher <span class="org">· Self-employed / Education Point, India</span></h4><p>Taught math, physics, chemistry and English; used mock-assessment results to find each student's weak topics and built targeted practice sets.</p></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p class="sub">Open to 2027 new-grad roles in C++, simulation, graphics, game engines and robotics. Happy to relocate.</p>
+    <div class="contact">
+      <a class="mail" href="mailto:yadwinderdhaliwal250@gmail.com">yadwinderdhaliwal250@gmail.com</a>
+      <button class="copy" id="copy" type="button">Copy email</button>
+    </div>
+    <p class="meta" style="margin-top:14px">
+      <a href="https://github.com/yadwinder-dhaliwal" target="_blank" rel="noopener">github.com/yadwinder-dhaliwal</a> ·
+      <a href="https://www.linkedin.com/in/yadwinder-dhaliwal" target="_blank" rel="noopener">linkedin.com/in/yadwinder-dhaliwal</a>
+    </p>
+  </section>
+
+</main>
+
+<footer><div class="wrap">© 2026 Yadwinder Dhaliwal · Calgary, AB</div></footer>
+
+<script>
+{
+  const root = document.documentElement;
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const eff = () => root.dataset.theme || (mq.matches ? 'dark' : 'light');
+  const sync = () => { root.dataset.eff = eff(); };
+  sync();
+  mq.addEventListener && mq.addEventListener('change', sync);
+  new MutationObserver(sync).observe(root, {attributes: true, attributeFilter: ['data-theme']});
+  document.getElementById('theme').addEventListener('click', () => {
+    const next = eff() === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+
+  const copyBtn = document.getElementById('copy');
+  copyBtn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText('yadwinderdhaliwal250@gmail.com'); copyBtn.textContent = 'Copied'; }
+    catch (e) { copyBtn.textContent = 'Select the address to copy'; }
+    setTimeout(() => { copyBtn.textContent = 'Copy email'; }, 2000);
+  });
+
+  /* mobile menu */
+  const nav = document.querySelector('nav'), menu = document.getElementById('menu');
+  const setMenu = open => { nav.classList.toggle('open', open); menu.setAttribute('aria-expanded', open); menu.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); };
+  menu.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  document.querySelectorAll('.sheet a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+  window.addEventListener('resize', () => { if (innerWidth > 640) setMenu(false); });
+
+  /* ambient glow: sample the playing frame (~15 fps) into a tiny canvas behind the card */
+  document.querySelectorAll('.media video').forEach(v => {
+    const card = v.closest('.card');
+    const c = document.createElement('canvas');
+    c.className = 'amb'; c.setAttribute('aria-hidden', 'true');
+    card.prepend(c);
+    const ctx = c.getContext('2d');
+    const S = 0.08;
+    let raf = 0, last = 0;
+    const paint = () => {
+      const cr = card.getBoundingClientRect(), vr = v.getBoundingClientRect();
+      const W = Math.max(8, Math.round(cr.width * S)), H = Math.max(8, Math.round(cr.height * S));
+      if (c.width !== W || c.height !== H) { c.width = W; c.height = H; }
+      const x = (vr.left - cr.left) * S, y = (vr.top - cr.top) * S, w = vr.width * S, h = vr.height * S;
+      ctx.clearRect(0, 0, W, H);
+      try {
+        ctx.globalAlpha = 1;
+        ctx.drawImage(v, x - w * .2, y - h * .2, w * 1.4, h * 1.4);
+        ctx.globalAlpha = .55;
+        ctx.drawImage(v, 0, y + h, W, H - (y + h));
+      } catch (e) {}
+    };
+    const loop = t => {
+      raf = requestAnimationFrame(loop);
+      if (t - last < 66 || v.readyState < 2) return;
+      last = t; paint();
+    };
+    const on = () => { card.classList.add('lit'); cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); };
+    const off = () => { card.classList.remove('lit'); cancelAnimationFrame(raf); };
+    v.addEventListener('playing', on);
+    v.addEventListener('pause', off);
+    v.addEventListener('ended', off);
+    v.addEventListener('waiting', () => cancelAnimationFrame(raf));
+  });
+
+  /* play project videos only while visible; no autoplay under reduced motion */
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const vio = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting && !still && !v.dataset.paused) { v.preload = 'auto'; v.play().catch(() => {}); }
+    else if (!e.isIntersecting && !v.paused) { v.dataset.auto = '1'; v.pause(); }
+  }), {threshold: .4});
+  document.querySelectorAll('.media video').forEach(v => {
+    vio.observe(v);
+    v.addEventListener('pause', () => { if (v.dataset.auto) delete v.dataset.auto; else v.dataset.paused = '1'; });
+    v.addEventListener('play', () => { delete v.dataset.paused; });
+  });
+
+  /* uniform cubic B-spline through a crater-profile control polygon */
+  const P = [[0,.40],[.09,.40],[.19,.37],[.29,.18],[.37,.50],[.45,.88],[.55,.88],[.63,.50],[.71,.20],[.81,.37],[.91,.41],[1,.41]];
+  const ctl = [P[0], P[0], ...P, P[P.length-1], P[P.length-1]];
+  const svg = document.getElementById('spline');
+  let drawn = false;
+  const draw = () => {
+    const W = svg.clientWidth, H = svg.clientHeight;
+    if (!W || !H) return;
+    const pad = 12, X = x => pad + x * (W - 2*pad), Y = y => pad + y * (H - 2*pad - 10);
+    const pts = [];
+    for (let i = 0; i + 3 < ctl.length; i++) {
+      const [a,b,c,d] = [ctl[i],ctl[i+1],ctl[i+2],ctl[i+3]];
+      for (let s = 0; s <= 16; s++) {
+        const t = s/16, t2 = t*t, t3 = t2*t;
+        const w0 = (1-t)**3/6, w1 = (3*t3 - 6*t2 + 4)/6, w2 = (-3*t3 + 3*t2 + 3*t + 1)/6, w3 = t3/6;
+        pts.push([X(w0*a[0]+w1*b[0]+w2*c[0]+w3*d[0]), Y(w0*a[1]+w1*b[1]+w2*c[1]+w3*d[1])]);
+      }
+    }
+    const curve = 'M' + pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('L');
+    const poly = P.map(p => X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1)).join(' ');
+    const area = curve + `L${X(1)} ${H}L${X(0)} ${H}Z`;
+    svg.innerHTML =
+      `<path d="${area}" fill="var(--bg2)"/>` +
+      `<polyline points="${poly}" fill="none" stroke="var(--mute)" stroke-width="1" stroke-dasharray="4 4" opacity=".55"/>` +
+      P.map(p => `<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="3.5" fill="var(--bg)" stroke="var(--mute)" stroke-width="1.2"/>`).join('') +
+      `<path id="curve" d="${curve}" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round"/>`;
+    const c = document.getElementById('curve');
+    if (!drawn) {
+      const L = c.getTotalLength();
+      c.style.strokeDasharray = L; c.style.strokeDashoffset = L;
+      c.style.animation = 'draw 1.6s ease-out .2s forwards';
+      drawn = true;
+    }
+  };
+  const ro = new ResizeObserver(draw);
+  ro.observe(svg);
+}
+</script>
+</body>
+</html>

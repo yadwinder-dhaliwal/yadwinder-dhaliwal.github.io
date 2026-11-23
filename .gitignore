@@ -1,0 +1,10 @@
+# Raw video exports (keep only the compressed files in media/)
+raw/
+*.mov
+*.mkv
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini
